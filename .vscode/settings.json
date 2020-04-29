@@ -1,0 +1,8 @@
+{
+    "code-runner.executorMapByFileExtension": {
+        ".asm": "./montador $fileName $fileNameWithoutExt.mif && ./sim $fileNameWithoutExt.mif charmap.mif && rm $fileNameWithoutExt.mif"
+    },
+    "files.exclude": {
+        "**/.vscode": true
+    }
+}

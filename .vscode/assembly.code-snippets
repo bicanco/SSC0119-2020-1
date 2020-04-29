@@ -1,0 +1,613 @@
+{
+	// Place your assembly workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+	"add": {
+		"scope": "assembly",
+		"prefix": "add",
+		"body": [
+			"add ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Soma (sem carry) os dois últimos registradores e armazena o resultado no primeiro registrador"
+	},
+	"addc": {
+		"scope": "assembly",
+		"prefix": "addc",
+		"body": [
+			"addc ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Soma (com carry) os dois últimos registradores e armazena o resultado no primeiro registrador"
+	},
+	"sub": {
+		"scope": "assembly",
+		"prefix": "sub",
+		"body": [
+			"sub ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Subtrai (sem carry) os dois últimos registradores e armazena o resultado no primeiro registrador"
+	},
+	"subc": {
+		"scope": "assembly",
+		"prefix": "subc",
+		"body": [
+			"subc ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Subtrai (com carry) os dois últimos registradores e armazena o resultado no primeiro registrador"
+	},
+	"mul": {
+		"scope": "assembly",
+		"prefix": "mul",
+		"body": [
+			"mul ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Multiplica os dois últimos registradores e armazena o resultado no primeiro registrador"
+	},
+	"div": {
+		"scope": "assembly",
+		"prefix": "div",
+		"body": [
+			"div ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Divide os dois últimos registradores e armazena o resultado no primeiro registrador"
+	},
+	"inc": {
+		"scope": "assembly",
+		"prefix": "inc",
+		"body": [
+			"inc ${1|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Incrementa um registrador. Não funcionara corretamente. complemento de 2"
+	},
+	"dec": {
+		"scope": "assembly",
+		"prefix": "dec",
+		"body": [
+			"dec ${1|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Decrementa um registrador. Não funcionara corretamente. complemento de 2"
+	},
+	"mod": {
+		"scope": "assembly",
+		"prefix": "mod",
+		"body": [
+			"mod ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Divide os dois últimos registradores e armazena o resto da divisao no primeiro registrador"
+	},
+	"rotl": {
+		"scope": "assembly",
+		"prefix": "rotl",
+		"body": [
+			"rotl ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, #${2:0}",
+			"$0"
+		],
+		"description": "Rotaciona os bits do registrador para a esquerda"
+	},
+	"rotr": {
+		"scope": "assembly",
+		"prefix": "rotr",
+		"body": [
+			"rotr ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, #${2:0}",
+			"$0"
+		],
+		"description": "Rotaciona os bits do registrador para a direita"
+	},
+	"shiftl0": {
+		"scope": "assembly",
+		"prefix": "shiftl0",
+		"body": [
+			"shiftl0 ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, #${2:0}",
+			"$0"
+		],
+		"description": "Faz um shift dos bits do registrador para a esquerda preenchendo com 0"
+	},
+	"shiftl1": {
+		"scope": "assembly",
+		"prefix": "shiftl1",
+		"body": [
+			"shiftl1 ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, #${2:0}",
+			"$0"
+		],
+		"description": "Faz um shift dos bits do registrador para a esquerda preenchendo com 1"
+	},
+	"shiftr0": {
+		"scope": "assembly",
+		"prefix": "shiftr0",
+		"body": [
+			"shiftr0 ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, #${2:0}",
+			"$0"
+		],
+		"description": "Faz um shift dos bits do registrador para a direita preenchendo com 0"
+	},
+	"shiftr1": {
+		"scope": "assembly",
+		"prefix": "shiftr1",
+		"body": [
+			"shiftr1 ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, #${2:0}",
+			"$0"
+		],
+		"description": "Faz um shift dos bits do registrador para a direita preenchendo com 1"
+	},
+	"and": {
+		"scope": "assembly",
+		"prefix": "and",
+		"body": [
+			"and ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Faz um AND lógico dos dois últimos registradores e armazena no primeiro registrador"
+	},
+	"or": {
+		"scope": "assembly",
+		"prefix": "or",
+		"body": [
+			"or ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Faz um OR lógico dos dois últimos registradores e armazena no primeiro registrador"
+	},
+	"xor": {
+		"scope": "assembly",
+		"prefix": "xor",
+		"body": [
+			"xor ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}, ${3|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Faz um XOR lógico dos dois últimos registradores e armazena no primeiro registrador"
+	},
+	"not": {
+		"scope": "assembly",
+		"prefix": "not",
+		"body": [
+			"not ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Faz um NOT lógico do último registrador e armazena no primeiro registrador"
+	},
+	"cmp": {
+		"scope": "assembly",
+		"prefix": "cmp",
+		"body": [
+			"cmp ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Compara os dois registradores e faz um set das flags correspondentes a comparação"
+	},
+	"store": {
+		"scope": "assembly",
+		"prefix": "store",
+		"body": [
+			"store ${1:End}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Armazena no endereço de memória o conteúdo do registrador"
+	},
+	"storei": {
+		"scope": "assembly",
+		"prefix": "storei",
+		"body": [
+			"storei ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Armazena no endereço de memória contido no primeiro registrador o conteúdo do segundo registrador"
+	},
+	"load": {
+		"scope": "assembly",
+		"prefix": "load",
+		"body": [
+			"load  ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2:End}",
+			"$0"
+		],
+		"description": "Carrega no registrador o conteúdo do endereço de memória"
+	},
+	"loadi": {
+		"scope": "assembly",
+		"prefix": "loadi",
+		"body": [
+			"loadi ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Carrega no primeiro registrador o conteúdo da memória no endereço contido no segundo registrador"
+	},
+	"mov": {
+		"scope": "assembly",
+		"prefix": "mov",
+		"body": [
+			"mov ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Copia para o primeiro registrador o conteúdo do segundo registrador"
+	},
+	"loadn": {
+		"scope": "assembly",
+		"prefix": "loadn",
+		"body": [
+			"loadi ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, #${2:0}",
+			"$0"
+		],
+		"description": "Carrega para o registrador o número"
+	},
+	"jmp": {
+		"scope": "assembly",
+		"prefix": "jmp",
+		"body": [
+			"jmp ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço"
+	},
+	"jeq": {
+		"scope": "assembly",
+		"prefix": "jeq",
+		"body": [
+			"jeq ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço se a flag de igual estiver com 1"
+	},
+	"jne": {
+		"scope": "assembly",
+		"prefix": "jne",
+		"body": [
+			"jne ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	},
+	// "jz": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jz",
+	// 	"body": [
+	// 		"jz ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "jnz": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jnz",
+	// 	"body": [
+	// 		"jnz ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "jc": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jc",
+	// 	"body": [
+	// 		"jc ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "jnc": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jnc",
+	// 	"body": [
+	// 		"jnc ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	"jgr": {
+		"scope": "assembly",
+		"prefix": "jgr",
+		"body": [
+			"jgr ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço se a flag de maior estiver com 1"
+	},
+	"jle": {
+		"scope": "assembly",
+		"prefix": "jle",
+		"body": [
+			"jle ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço se a flag de menor estiver com 0"
+	},
+	"jeg": {
+		"scope": "assembly",
+		"prefix": "jeg",
+		"body": [
+			"jeg ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço se a flag de igual ou a de maior estiver com 1"
+	},
+	"jel": {
+		"scope": "assembly",
+		"prefix": "jel",
+		"body": [
+			"jel ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço se a flag de igual ou a de menor estiver com 1"
+	},
+	// "jov": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jov",
+	// 	"body": [
+	// 		"jov ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de maior estiver com 1"
+	// },
+	// "jno": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jno",
+	// 	"body": [
+	// 		"jno ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de menor estiver com 0"
+	// },
+	// "jn": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jn",
+	// 	"body": [
+	// 		"jn ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual ou a de maior estiver com 1"
+	// },
+	// "jdz": {
+	// 	"scope": "assembly",
+	// 	"prefix": "jdz",
+	// 	"body": [
+	// 		"jdz ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual ou a de menor estiver com 1"
+	// },
+	"call": {
+		"scope": "assembly",
+		"prefix": "call",
+		"body": [
+			"call ${1:End}",
+			"$0"
+		],
+		"description": "Altera PC para o endereço e coloca o endereço da próxima instrução na pilha"
+	},
+	// "ceq": {
+	// 	"scope": "assembly",
+	// 	"prefix": "ceq",
+	// 	"body": [
+	// 		"ceq ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 1"
+	// },
+	// "cne": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cne",
+	// 	"body": [
+	// 		"cne ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "cz": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cz",
+	// 	"body": [
+	// 		"cz ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "cnz": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cnz",
+	// 	"body": [
+	// 		"cnz ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "cc": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cc",
+	// 	"body": [
+	// 		"cc ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "cnc": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cnc",
+	// 	"body": [
+	// 		"cnc ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual estiver com 0"
+	// },
+	// "cgr": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cgr",
+	// 	"body": [
+	// 		"cgr ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de maior estiver com 1"
+	// },
+	// "cle": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cle",
+	// 	"body": [
+	// 		"cle ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de menor estiver com 0"
+	// },
+	// "ceg": {
+	// 	"scope": "assembly",
+	// 	"prefix": "ceg",
+	// 	"body": [
+	// 		"ceg ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual ou a de maior estiver com 1"
+	// },
+	// "cel": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cel",
+	// 	"body": [
+	// 		"cel ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual ou a de menor estiver com 1"
+	// },
+	// "cov": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cov",
+	// 	"body": [
+	// 		"cov ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de maior estiver com 1"
+	// },
+	// "cno": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cno",
+	// 	"body": [
+	// 		"cno ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de menor estiver com 0"
+	// },
+	// "cn": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cn",
+	// 	"body": [
+	// 		"jn ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual ou a de maior estiver com 1"
+	// },
+	// "cdz": {
+	// 	"scope": "assembly",
+	// 	"prefix": "cdz",
+	// 	"body": [
+	// 		"cdz ${1:End}",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço se a flag de igual ou a de menor estiver com 1"
+	// },
+	"rts": {
+		"scope": "assembly",
+		"prefix": "rts",
+		"body": [
+			"rts",
+			"$0"
+		],
+		"description": "Altera PC para o endereço que está no topo da pilha"
+	},
+	"inchar": {
+		"scope": "assembly",
+		"prefix": "inchar",
+		"body": [
+			"inchar ${1|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Guarda no registrador o que for lido como input (teclado)"
+	},
+	"outchar": {
+		"scope": "assembly",
+		"prefix": "outchar",
+		"body": [
+			"outchar ${1|r0,r1,r2,r3,r4,r5,r6,r7|}, ${2|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Iprime na tela o conteúdo do primeiro registrador na posição que está no segundo registrador"
+	},
+	"push": {
+		"scope": "assembly",
+		"prefix": "push",
+		"body": [
+			"push ${1|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Empilha o conteúdo do registrador"
+	},
+	"pop": {
+		"scope": "assembly",
+		"prefix": "pop",
+		"body": [
+			"pop ${1|r0,r1,r2,r3,r4,r5,r6,r7|}",
+			"$0"
+		],
+		"description": "Desempilha e guarda o contúdo no registrador"
+	},
+	// "clearc": {
+	// 	"scope": "assembly",
+	// 	"prefix": "clearc",
+	// 	"body": [
+	// 		"clearc",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço que está no topo da pilha"
+	// },
+	// "setc": {
+	// 	"scope": "assembly",
+	// 	"prefix": "setc",
+	// 	"body": [
+	// 		"setc",
+	// 		"$0"
+	// 	],
+	// 	"description": "Altera PC para o endereço que está no topo da pilha"
+	// },
+	"halt": {
+		"scope": "assembly",
+		"prefix": "halt",
+		"body": [
+			"halt",
+			"$0"
+		],
+		"description": "Encerra a execução do programa"
+	},
+	"breakp": {
+		"scope": "assembly",
+		"prefix": "breakp",
+		"body": [
+			"breakp",
+			"$0"
+		],
+		"description": "Insere um breakpoint no código"
+	},
+	"nop": {
+		"scope": "assembly",
+		"prefix": "nop",
+		"body": [
+			"nop",
+			"$0"
+		],
+		"description": "Instrução que não faz nada"
+	}
+}
