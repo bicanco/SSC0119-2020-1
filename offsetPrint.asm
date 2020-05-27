@@ -1,6 +1,9 @@
 jmp main            ; jump to the main function
 
 ; >>>>>>>>>>>> CONSTANTS
+ParityTest: var #1
+static ParityTest + #0, #2
+
 ScreenWidth: var #1
 static ScreenWidth + #0, #40
 
@@ -29,7 +32,7 @@ TestLaneChar3: string ">d=i=n=r=FORTH LINE OF TEST LANE=w=b=g=<"
 TestLaneChar4: string ">e=j=o=s=FIFTH LINE OF TEST LANE=x=c=h=<"
 
 ; >>>>>>>>>>>> GLOBAL VARIABLES
-globalOffset: var #1          ; current line offset
+globalOffset: var #2          ; current line offset = [positive/left, negative/right]
 currentLaneBase: var #1       ; current lane base positions
 
 ; >>>>>>>>>>>> FUNCTIONS
@@ -50,8 +53,13 @@ globalInit:
   push r0                     ; protecting registers
   push r1
 
-  loadn r0, #3
-  store globalOffset, r0      ; init global offset
+  loadn r0, #globalOffset     ; r0 = *globalOffset[0]
+  loadn r1, #10                ; default positive global offset
+  storei r0, r1               ; globalOffset[0] = positive offset
+
+  inc r0                      ; r0 = *globalOffset[1]
+  loadn r1, #30               ; default negative global offset
+  storei r0, r1               ; globalOffset[1] = negative offset
 
 globalInitLanes:              ; === GLOBALINIT > LANES ===
   ; TestLane
@@ -114,7 +122,13 @@ printLaneCharLoop:            ; === PRINTLANE > CHAR > LOOP ===
   cmp r7, r3                  ; comparing char with StringEnd
   jeq printLaneCharEnd        ; char === StringEnd -> jump to charEnd, ending line printing
 
-  load r4, globalOffset       ; r4: position to be printed; r4 = globalOffset
+  load r7, ParityTest         ; r7 = ParityTest = 2
+  mod r7, r0, r7              ; r7 = lineCounter % 2
+
+  loadn r4, #globalOffset     ; r4: position to be printed; r4 = *globalOffset
+  add r4, r4, r7              ; r4 = *globalOffset[lineCounter % 2]
+  loadi r4, r4                ; r4 = correct global offset
+
   add r4, r4, r1              ; r4 = (globalOffset + charCounter)
 
   load r7, ScreenWidth        ; r7 = screenWidth
@@ -145,4 +159,3 @@ printLaneEnd:                 ; === PRINTLANE > END ===
   pop r0
 
   rts                         ; return to main function
-
