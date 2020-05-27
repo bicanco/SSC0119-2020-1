@@ -40,16 +40,21 @@ currentLaneBase: var #1       ; current lane base positions
 ; === MAIN ===
 main:
   call globalInit             ; init global variables
-  breakp
+
   loadn r0, #FirstLaneBasePos ; r0 = FirstLaneBasePos[]
   store currentLaneBase, r0   ; currentLaneBase = FirstLaneBasePos[]
+
+mainLoop:
+  breakp
   call printLane              ; call print first lane
+  call updateOffset           ; call update offset
+  jmp mainLoop                ; test loop
 
   halt                        ; end of program
 
 
 ; === GLOBALINIT ===
-globalInit:
+globalInit:                   ; === GLOBALINIT ===
   push r0                     ; protecting registers
   push r1
 
@@ -91,7 +96,7 @@ globalInitEnd:                ; === GLOBALINIT > END ===
 
 
 ; === PRINTLANE ===
-printLane:
+printLane:                    ; === PRINTLANE ===
   push r0                     ; protecting registers
   push r1
   push r2
@@ -103,7 +108,6 @@ printLane:
   loadn r1, #0                ; r1 = charCounter
 
 printLaneLine:                ; === PRINTLANE > LINE ===
-  breakp
   load r7, LaneSize           ; r7 = comparation limit; r7 = LaneSize
   cmp r7, r0                  ; comparing lineCounter with LaneSize
   jeq printLaneEnd            ; lineCounter === LaneSize -> jump to end
@@ -155,6 +159,34 @@ printLaneEnd:                 ; === PRINTLANE > END ===
   pop r4
   pop r3
   pop r2
+  pop r1
+  pop r0
+
+  rts                         ; return to main function
+
+
+; === UPDATEOFFSET ===
+updateOffset:                 ; === UPDATEOFFSET ===
+  push r0                     ; protecting registers
+  push r1
+  push r2
+
+  load r0, ScreenWidth        ; r0 = ScreenWidth
+  loadn r1, #globalOffset     ; r1 = *globalOffset[0=pos]
+
+  loadi r2, r1                ; r2 = globalOffset[0=pos]
+  inc r2                      ; r2 = globalOffset[0=pos] + 1
+  mod r2, r2, r0              ; r2 = (globalOffset[0=pos] + 1) % ScreenWidth
+  storei r1, r2               ; globalOffset[0=pos] updated
+
+  inc r1                      ; r1 = *globalOffset[1=neg]
+  loadi r2, r1                ; r2 = globalOffset[1=neg]
+  add r2, r2, r0              ; sum with ScreenWidth to not have negative values
+  dec r2                      ; r2 = globalOffset[1=neg] - 1
+  mod r2, r2, r0              ; r2 = (globalOffset[1=neg] - 1) % ScreenWidth
+  storei r1, r2               ; globalOffset[1=neg] updated
+
+  pop r2                      ; recovering registers
   pop r1
   pop r0
 
