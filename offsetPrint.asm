@@ -7,8 +7,8 @@ static ParityTest + #0, #2
 ScreenWidth: var #1
 static ScreenWidth + #0, #40
 
-; ScreenHeight : var #1
-; static ScreenHeight + #0, #30
+ScreenHeight : var #1
+static ScreenHeight + #0, #30
 
 StringEnd: var #1
 static StringEnd + #0, #'\0'
@@ -67,7 +67,6 @@ globalInit:                   ; === GLOBALINIT ===
   storei r0, r1               ; globalOffset[1] = negative offset
 
 globalInitLanes:              ; === GLOBALINIT > LANES ===
-  ; TestLane
   loadn r0, #TestLaneChars    ; r0 = TestLaneChars[0]
   loadn r1, #TestLaneChar0    ; r1 = *TestLaneChar0
   storei r0, r1               ; TestLaneChars[0] = TestLaneChar0
@@ -92,7 +91,7 @@ globalInitEnd:                ; === GLOBALINIT > END ===
   pop r1                      ; recovering registers
   pop r0
 
-  rts                         ; return globalInit function
+  rts                         ; return to main function
 
 
 ; === PRINTLANE ===
