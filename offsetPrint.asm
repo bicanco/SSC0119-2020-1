@@ -25,11 +25,11 @@ static FirstLaneBasePos + #4, #200
 
 ; >>>>>>>>>>>> STRINGS
 TestLaneChars: var #5
-TestLaneChar0: string ">a=f=k=p=FIRST LINE OF TEST LANE=t=y=d=<"
-TestLaneChar1: string ">b=g=l=?=SCOND LINE OF TEST LANE=u=z=e=<"
-TestLaneChar2: string ">c=h=m=q=THIRD LINE OF TEST LANE=v=a=f=<"
-TestLaneChar3: string ">d=i=n=r=FORTH LINE OF TEST LANE=w=b=g=<"
-TestLaneChar4: string ">e=j=o=s=FIFTH LINE OF TEST LANE=x=c=h=<"
+TestLaneChar0: string "=====<<<<>=====<<<<>=====<<<<>=====<<<<>"
+TestLaneChar1: string "wwwwttttwwwwwwwttttwwwwwwwwwwttttwwwwwww"
+TestLaneChar2: string "==cb=======cb====cb======cb======cb====="
+TestLaneChar3: string "=====cb========cb===cb========cb======cb"
+TestLaneChar4: string "gGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgG"
 
 ; >>>>>>>>>>>> GLOBAL VARIABLES
 globalOffset: var #2          ; current line offset = [positive/left, negative/right]
@@ -101,6 +101,8 @@ printLane:                    ; === PRINTLANE ===
   push r2
   push r3
   push r4
+  push r5
+  push r6
   push r7
 
   loadn r0, #0                ; r0 = lineCounter
@@ -142,6 +144,61 @@ printLaneCharLoop:            ; === PRINTLANE > CHAR > LOOP ===
   loadi r7, r7                ; r7 = lineBase
   add r4, r4, r7              ; r4 = ((globalOffset + charCounter) % screenWidth) + lineBase
 
+  ;=== checking object colors
+  ;===== grass
+  loadn r5, #512              ; loading color green
+  loadn r6, #'g'
+  cmp r3, r6
+  jeq continue
+
+  loadn r6, #'G'
+  cmp r3, r6
+  jeq continue
+
+  ;===== river
+  loadn r5, #3072              ; loading color blue
+  loadn r6, #'w'
+  cmp r3, r6
+  jeq continue
+
+  ;===== trunk
+  loadn r5, #256              ; loading color brown
+  loadn r6, #'t'
+  cmp r3, r6
+  jeq continue
+
+  ;===== car
+  loadn r5, #2304              ; loading color red
+  loadn r6, #'c'
+  cmp r3, r6
+  jeq continue
+
+  loadn r6, #'b'
+  cmp r3, r6
+  jeq continue
+
+  ;===== street
+  loadn r5, #2048              ; loading color gray
+  loadn r6, #'='
+  cmp r3, r6
+  jeq continue
+
+  ;===== truck
+  loadn r5, #2560              ; loading color lima
+  loadn r6, #'>'
+  cmp r3, r6
+  jeq continue
+
+  loadn r5, #3584              ; loading color lima
+  loadn r6, #'<'
+  cmp r3, r6
+  jeq continue
+
+  ;===== none
+  loadn r5, #0               ; loading color green
+
+continue:
+  add r3, r3, r5              ; coloring char
   outchar r3, r4              ; print r3 content in r4 position
 
   inc r1                      ; incrementing charCounter
@@ -155,6 +212,8 @@ printLaneCharEnd:             ; === PRINTLANE > CHAR > END ===
 
 printLaneEnd:                 ; === PRINTLANE > END ===
   pop r7                      ; recovering registers
+  pop r5
+  pop r6
   pop r4
   pop r3
   pop r2
