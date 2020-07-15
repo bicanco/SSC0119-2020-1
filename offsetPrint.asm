@@ -35,6 +35,8 @@ TestLaneChar4: string "gGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgG"
 globalOffset: var #2          ; current line offset = [positive/left, negative/right]
 currentLaneBase: var #1       ; current lane base positions
 
+frogPos: var #1
+static frogPos + #0, #240     ; initial frog position
 ; >>>>>>>>>>>> FUNCTIONS
 
 ; === MAIN ===
@@ -45,7 +47,9 @@ main:
   store currentLaneBase, r0   ; currentLaneBase = FirstLaneBasePos[]
 
 mainLoop:
-  breakp
+;  breakp
+  call moveFrog               ; call move Frog
+  call printFrog              ; call print Frog
   call printLane              ; call print first lane
   call updateOffset           ; call update offset
   jmp mainLoop                ; test loop
@@ -249,3 +253,161 @@ updateOffset:                 ; === UPDATEOFFSET ===
   pop r0
 
   rts                         ; return to main function
+
+
+
+printFrog:
+  push r0
+  push r1
+  push r2
+                ;============================= ESCOLHER O CARACTER COM O SPRITE DO SAPO =======================================
+  loadn r0, #'A'              ; r0 = frogSprite
+  load r1, frogPos            ; r1 = frogPosition
+  loadn r2, #512              ; r2 = Green Color
+  add r0, r0, r2              ; colouring frog Sprite
+  outchar r0, r1              ; printing frog sprite
+  
+  pop r2
+  pop r1
+  pop r0
+  
+  rts                         ; return to main function
+  
+moveFrog:
+  push r0
+  push r1
+  
+  call eraseFrog 
+  
+  inchar r1                   ; r1 = userInput
+  
+  loadn r0, #'a'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters 
+  ceq moveFrogLeft            ; If (userInput = comparisonCharacter = a) moveFrogLeft
+
+  loadn r0, #'d'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters
+  ceq moveFrogRight           ; If (userInput = comparisonCharacter = a) moveFrogLeft
+
+  loadn r0, #'w'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters 
+  ceq moveFrogUp            ; If (userInput = comparisonCharacter = a) moveFrogLeft
+
+  loadn r0, #'s'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters 
+  ceq moveFrogDown              ; If (userInput = comparisonCharacter = a) moveFrogLeft
+
+  pop r1
+  pop r0
+  rts                         ; return to main function
+  
+moveFrogUp:
+  push r0
+  push r1
+  
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #40               ; r0 = frog Pos
+  sub r0, r0, r1              ; frog Pos = frog pos - 40 = go up
+  
+  store frogPos, r0           ; store new frog position
+  
+  pop r1
+  pop r0
+  
+  rts
+  
+moveFrogDown:
+  push r0
+  push r1
+  
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #40               ; r1 = 40
+  add r0, r0, r1              ; frog Pos = frog pos + 40 = go down
+  
+  store frogPos, r0           ; store new frog position
+  
+  pop r1
+  pop r0
+  
+  rts
+  
+moveFrogLeft:
+  push r0
+  push r1
+  push r2
+  push r3
+  
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #1                ; r1 = 1
+  sub r0, r0, r1              ; frog Pos = frog pos - 1 = go left
+  
+  
+checkLeftBorder:
+  loadn r3, #40                ; r3 = 40
+  loadn r2, #39                ; r2 = 39
+  
+  mod r1, r0, r3               ; r1 = new frog Pos % 40
+  cmp r1, r2                   ; comparing r1 and r2
+  jne goLeft                   ; If (r1 != r2) = (new frog Pos % 40 != 39) Save new frog pos
+  
+  add r0, r0, r3               ; Else r0 = r0 + 40 = Frog move one line down
+  
+goLeft: 
+  store frogPos, r0            ; Store frog pos
+  
+  pop r3
+  pop r2
+  pop r1
+  pop r0
+  
+  rts
+
+moveFrogRight:
+  push r0
+  push r1
+  push r2
+  push r3
+  
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #1                ; r1 = 1
+  add r0, r0, r1              ; frog Pos = frog pos - 1 = go left
+  
+  
+checkRightBorder:
+  loadn r3, #40               ; r3 = 40
+  loadn r2, #0                ; r2 = 39
+  
+  mod r1, r0, r3              ; r1 = new frog Pos % 40
+  cmp r1, r2                  ; comparing r1 and r2
+  jne goRight                 ; If (r1 != r2) = (new frog Pos % 40 != 39) Save new frog pos
+  
+  sub r0, r0, r3              ; Else r0 = r0 + 40 = Frog move one line down
+  
+goRight: 
+  store frogPos, r0           ; Store frog pos
+  
+  pop r3
+  pop r2
+  pop r1
+  pop r0
+  
+  rts
+  
+eraseFrog:
+  push r0
+  push r1
+  push r2
+  
+  loadn r0, #' '
+  load r1, frogPos
+  loadn r2, #0
+  add r0, r0, r2
+  outchar r0, r1
+  
+  pop r2
+  pop r1
+  pop r0
+  
+  rts
+
+  
