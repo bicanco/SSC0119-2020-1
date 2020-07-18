@@ -4,6 +4,9 @@ jmp main            ; jump to the main function
 ParityTest: var #1
 static ParityTest + #0, #2
 
+OffsetCounterMax: var #1
+static OffsetCounterMax + #0, #5
+
 ScreenWidth: var #1
 static ScreenWidth + #0, #40
 
@@ -37,6 +40,9 @@ currentLaneBase: var #1       ; current lane base positions
 
 frogPos: var #1
 static frogPos + #0, #240     ; initial frog position
+
+offsetCounter: var #1
+static offsetCounter + #0, #0 ; initial offset change counter
 ; >>>>>>>>>>>> FUNCTIONS
 
 ; === MAIN ===
@@ -233,6 +239,11 @@ updateOffset:                 ; === UPDATEOFFSET ===
   push r1
   push r2
 
+  load r0, offsetCounter      ; r0 = offsetCounter
+  load r1, OffsetCounterMax   ; r1 = OffsetCounterMax
+  cmp r0, r1                  ; offsetCounter == OffsetCounterMax?
+  jne updateOffsetCount       ; if isn't max yet, don't update the offset and count
+
   load r0, ScreenWidth        ; r0 = ScreenWidth
   loadn r1, #globalOffset     ; r1 = *globalOffset[0=pos]
 
@@ -248,6 +259,16 @@ updateOffset:                 ; === UPDATEOFFSET ===
   mod r2, r2, r0              ; r2 = (globalOffset[1=neg] - 1) % ScreenWidth
   storei r1, r2               ; globalOffset[1=neg] updated
 
+  loadn r0, #0                ; r0 = 0
+  store offsetCounter, r0     ; offsetCounter = 0 (reseted)
+  jmp updateOffsetEnd         ; end function
+
+updateOffsetCount:            ; === UPDATEOFFSET > COUNT ===
+  load r0, offsetCounter      ; r0 = offsetCounter
+  inc r0                      ; r0 = offsetCounter + 1
+  store offsetCounter, r0     ; offsetCounter++
+
+updateOffsetEnd:              ; === UPDATEOFFSET > END ===
   pop r2                      ; recovering registers
   pop r1
   pop r0
@@ -255,8 +276,8 @@ updateOffset:                 ; === UPDATEOFFSET ===
   rts                         ; return to main function
 
 
-
-printFrog:
+; === PRINTFROG ===
+printFrog:                    ; === PRINTFROG ===
   push r0
   push r1
   push r2
@@ -266,148 +287,145 @@ printFrog:
   loadn r2, #512              ; r2 = Green Color
   add r0, r0, r2              ; colouring frog Sprite
   outchar r0, r1              ; printing frog sprite
-  
+
   pop r2
   pop r1
   pop r0
-  
+
   rts                         ; return to main function
-  
-moveFrog:
-  push r0
-  push r1
-  
-  call eraseFrog 
-  
-  inchar r1                   ; r1 = userInput
-  
-  loadn r0, #'a'              ; r0 = comparisonCharacter
-  cmp r0, r1                  ; comparing characters 
-  ceq moveFrogLeft            ; If (userInput = comparisonCharacter = a) moveFrogLeft
 
-  loadn r0, #'d'              ; r0 = comparisonCharacter
-  cmp r0, r1                  ; comparing characters
-  ceq moveFrogRight           ; If (userInput = comparisonCharacter = a) moveFrogLeft
-
-  loadn r0, #'w'              ; r0 = comparisonCharacter
-  cmp r0, r1                  ; comparing characters 
-  ceq moveFrogUp            ; If (userInput = comparisonCharacter = a) moveFrogLeft
-
-  loadn r0, #'s'              ; r0 = comparisonCharacter
-  cmp r0, r1                  ; comparing characters 
-  ceq moveFrogDown              ; If (userInput = comparisonCharacter = a) moveFrogLeft
-
-  pop r1
-  pop r0
-  rts                         ; return to main function
-  
-moveFrogUp:
-  push r0
-  push r1
-  
-  load r0, frogPos            ; r0 = frog Pos
-  loadn r1, #40               ; r0 = frog Pos
-  sub r0, r0, r1              ; frog Pos = frog pos - 40 = go up
-  
-  store frogPos, r0           ; store new frog position
-  
-  pop r1
-  pop r0
-  
-  rts
-  
-moveFrogDown:
-  push r0
-  push r1
-  
-  load r0, frogPos            ; r0 = frog Pos
-  loadn r1, #40               ; r1 = 40
-  add r0, r0, r1              ; frog Pos = frog pos + 40 = go down
-  
-  store frogPos, r0           ; store new frog position
-  
-  pop r1
-  pop r0
-  
-  rts
-  
-moveFrogLeft:
+; === ERASEFROG ===
+eraseFrog:                    ; === ERASEFROG ===
   push r0
   push r1
   push r2
-  push r3
-  
-  load r0, frogPos            ; r0 = frog Pos
-  loadn r1, #1                ; r1 = 1
-  sub r0, r0, r1              ; frog Pos = frog pos - 1 = go left
-  
-  
-checkLeftBorder:
-  loadn r3, #40                ; r3 = 40
-  loadn r2, #39                ; r2 = 39
-  
-  mod r1, r0, r3               ; r1 = new frog Pos % 40
-  cmp r1, r2                   ; comparing r1 and r2
-  jne goLeft                   ; If (r1 != r2) = (new frog Pos % 40 != 39) Save new frog pos
-  
-  add r0, r0, r3               ; Else r0 = r0 + 40 = Frog move one line down
-  
-goLeft: 
-  store frogPos, r0            ; Store frog pos
-  
-  pop r3
-  pop r2
-  pop r1
-  pop r0
-  
-  rts
 
-moveFrogRight:
-  push r0
-  push r1
-  push r2
-  push r3
-  
-  load r0, frogPos            ; r0 = frog Pos
-  loadn r1, #1                ; r1 = 1
-  add r0, r0, r1              ; frog Pos = frog pos - 1 = go left
-  
-  
-checkRightBorder:
-  loadn r3, #40               ; r3 = 40
-  loadn r2, #0                ; r2 = 39
-  
-  mod r1, r0, r3              ; r1 = new frog Pos % 40
-  cmp r1, r2                  ; comparing r1 and r2
-  jne goRight                 ; If (r1 != r2) = (new frog Pos % 40 != 39) Save new frog pos
-  
-  sub r0, r0, r3              ; Else r0 = r0 + 40 = Frog move one line down
-  
-goRight: 
-  store frogPos, r0           ; Store frog pos
-  
-  pop r3
-  pop r2
-  pop r1
-  pop r0
-  
-  rts
-  
-eraseFrog:
-  push r0
-  push r1
-  push r2
-  
   loadn r0, #' '
   load r1, frogPos
   loadn r2, #0
   add r0, r0, r2
   outchar r0, r1
-  
+
   pop r2
   pop r1
   pop r0
-  
+
   rts
 
-  
+; === MOVEFROG ===
+moveFrog:                     ; === MOVEFROG ===
+  push r0
+  push r1
+
+  call eraseFrog
+
+  inchar r1                   ; r1 = userInput
+
+  loadn r0, #'a'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters
+  ceq moveFrogCalcLeft        ; If (userInput = comparisonCharacter = a) moveFrogCalcLeft
+
+  loadn r0, #'d'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters
+  ceq moveFrogCalcRight       ; If (userInput = comparisonCharacter = a) moveFrogCalcRight
+
+  loadn r0, #'w'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters
+  ceq moveFrogCalcUp          ; If (userInput = comparisonCharacter = a) moveFrogCalcUp
+
+  loadn r0, #'s'              ; r0 = comparisonCharacter
+  cmp r0, r1                  ; comparing characters
+  ceq moveFrogCalcDown        ; If (userInput = comparisonCharacter = a) moveFrogCalcDown
+
+  pop r1
+  pop r0
+  rts                         ; return to main function
+
+
+moveFrogCalcUp:               ; === MOVEFROG > CALC > UP ===
+  push r0
+  push r1
+
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #40               ; r0 = frog Pos
+  sub r0, r0, r1              ; frog Pos = frog pos - 40 = go up
+
+  store frogPos, r0           ; store new frog position
+
+  pop r1
+  pop r0
+
+  rts
+
+
+moveFrogCalcDown:             ; === MOVEFROG > CALC > DOWN ===
+  push r0
+  push r1
+
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #40               ; r1 = 40
+  add r0, r0, r1              ; frog Pos = frog pos + 40 = go down
+
+  store frogPos, r0           ; store new frog position
+
+  pop r1
+  pop r0
+
+  rts
+
+
+moveFrogCalcLeft:             ; === MOVEFROG > CALC > LEFT ===
+  push r0
+  push r1
+  push r2
+  push r3
+
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #1                ; r1 = 1
+  sub r0, r0, r1              ; frog Pos = frog pos - 1 = go left
+
+
+moveFrogBorderLeft:           ; === MOVEFROG > BORDER > LEFT ===
+  loadn r3, #40               ; r3 = 40
+  loadn r2, #39               ; r2 = 39
+
+  mod r1, r0, r3              ; r1 = new frog Pos % 40
+  cmp r1, r2                  ; comparing r1 and r2
+  jne moveFrogStore           ; If (r1 != r2) = (new frog Pos % 40 != 39) Save new frog pos
+
+  add r0, r0, r3              ; Else r0 = r0 + 40 = Frog move one line down
+
+
+moveFrogCalcRight:            ; === MOVEFROG > CALC > RIGHT ===
+  push r0
+  push r1
+  push r2
+  push r3
+
+  load r0, frogPos            ; r0 = frog Pos
+  loadn r1, #1                ; r1 = 1
+  add r0, r0, r1              ; frog Pos = frog pos - 1 = go right
+
+
+moveFrogBorderRight:          ; === MOVEFROG > BORDER > RIGHT ===
+  loadn r3, #40               ; r3 = 40
+  loadn r2, #0                ; r2 = 39
+
+  mod r1, r0, r3              ; r1 = new frog Pos % 40
+  cmp r1, r2                  ; comparing r1 and r2
+  jne moveFrogStore                 ; If (r1 != r2) = (new frog Pos % 40 != 39) Save new frog pos
+
+  sub r0, r0, r3              ; Else r0 = r0 + 40 = Frog move one line down
+
+
+moveFrogStore:                ; === MOVEFROG > STORE ===
+  store frogPos, r0           ; Store frog pos
+
+  pop r3
+  pop r2
+  pop r1
+  pop r0
+
+  rts
+
+
