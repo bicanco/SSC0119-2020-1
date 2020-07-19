@@ -5,7 +5,7 @@ ParityTest: var #1
 static ParityTest + #0, #2
 
 OffsetCounterMax: var #1
-static OffsetCounterMax + #0, #5
+static OffsetCounterMax + #0, #10
 
 ScreenWidth: var #1
 static ScreenWidth + #0, #40
@@ -15,6 +15,12 @@ static ScreenHeight + #0, #30
 
 StringEnd: var #1
 static StringEnd + #0, #'\0'
+
+CollisionTrue: var #1
+static CollisionTrue + #0, #'x'
+
+StartFrogPos: var #1
+static StartFrogPos + #0, #640
 
 LaneSize: var #1
 static LaneSize + #0, #5
@@ -26,6 +32,10 @@ static FirstLaneBasePos + #2, #120
 static FirstLaneBasePos + #3, #160
 static FirstLaneBasePos + #4, #200
 
+FirstLaneLimits: var #2
+static FirstLaneLimits + #0, #40
+static FirstLaneLimits + #1, #239
+
 ; >>>>>>>>>>>> STRINGS
 TestLaneChars: var #5
 TestLaneChar0: string "=====<<<<>=====<<<<>=====<<<<>=====<<<<>"
@@ -34,15 +44,25 @@ TestLaneChar2: string "==cb=======cb====cb======cb======cb====="
 TestLaneChar3: string "=====cb========cb===cb========cb======cb"
 TestLaneChar4: string "gGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgGgG"
 
+TestLaneColls: var #5
+TestLaneColl0: string "=====xxxxx=====xxxxx=====xxxxx=====xxxxx"
+TestLaneColl1: string "xxxx====xxxxxxx====xxxxxxxxxx====xxxxxxx"
+TestLaneColl2: string "==xx=======xx====xx======xx======xx====="
+TestLaneColl3: string "=====xx========xx===xx========xx======xx"
+TestLaneColl4: string "========================================"
+
 ; >>>>>>>>>>>> GLOBAL VARIABLES
 globalOffset: var #2          ; current line offset = [positive/left, negative/right]
+
 currentLaneBase: var #1       ; current lane base positions
+currentLaneColl: var #1       ; current lane collision positions
+currentLaneLimits: var #1     ; current lane limits = [min, max]
 
 frogPos: var #1
-static frogPos + #0, #240     ; initial frog position
 
 offsetCounter: var #1
 static offsetCounter + #0, #0 ; initial offset change counter
+
 ; >>>>>>>>>>>> FUNCTIONS
 
 ; === MAIN ===
@@ -52,9 +72,13 @@ main:
   loadn r0, #FirstLaneBasePos ; r0 = FirstLaneBasePos[]
   store currentLaneBase, r0   ; currentLaneBase = FirstLaneBasePos[]
 
+  loadn r0, #FirstLaneLimits  ; r0 = FirstLaneLimits[]
+  store currentLaneLimits, r0 ; currentLaneLimits = FirstLaneLimits[]
+
 mainLoop:
 ;  breakp
   call moveFrog               ; call move Frog
+  call collisionLane          ; call collision lane
   call printFrog              ; call print Frog
   call printLane              ; call print first lane
   call updateOffset           ; call update offset
@@ -76,6 +100,9 @@ globalInit:                   ; === GLOBALINIT ===
   loadn r1, #30               ; default negative global offset
   storei r0, r1               ; globalOffset[1] = negative offset
 
+  load r0, StartFrogPos       ; r0 = StartFrogPos
+  store frogPos, r0           ; frogPos = r0 = StartFrogPos
+
 globalInitLanes:              ; === GLOBALINIT > LANES ===
   loadn r0, #TestLaneChars    ; r0 = TestLaneChars[0]
   loadn r1, #TestLaneChar0    ; r1 = *TestLaneChar0
@@ -96,6 +123,26 @@ globalInitLanes:              ; === GLOBALINIT > LANES ===
   inc r0                      ; r0 = TestLaneChars[4]
   loadn r1, #TestLaneChar4    ; r1 = *TestLaneChar4
   storei r0, r1               ; TestLaneChars[4] = TestLaneChar4
+
+  loadn r0, #TestLaneColls    ; r0 = TestLaneColls[0]
+  loadn r1, #TestLaneColl0    ; r1 = *TestLaneColl0
+  storei r0, r1               ; TestLaneColls[0] = TestLaneColl0
+
+  inc r0                      ; r0 = TestLaneColls[1]
+  loadn r1, #TestLaneColl1    ; r1 = *TestLaneColl1
+  storei r0, r1               ; TestLaneColls[1] = TestLaneColl1
+
+  inc r0                      ; r0 = TestLaneColls[2]
+  loadn r1, #TestLaneColl2    ; r1 = *TestLaneColl2
+  storei r0, r1               ; TestLaneColls[2] = TestLaneColl2
+
+  inc r0                      ; r0 = TestLaneColls[3]
+  loadn r1, #TestLaneColl3    ; r1 = *TestLaneColl3
+  storei r0, r1               ; TestLaneColls[3] = TestLaneColl3
+
+  inc r0                      ; r0 = TestLaneColls[4]
+  loadn r1, #TestLaneColl4    ; r1 = *TestLaneColl4
+  storei r0, r1               ; TestLaneColls[4] = TestLaneColl4
 
 globalInitEnd:                ; === GLOBALINIT > END ===
   pop r1                      ; recovering registers
@@ -428,4 +475,66 @@ moveFrogStore:                ; === MOVEFROG > STORE ===
 
   rts
 
+; === COLLISIONLANE ===
+collisionLane:                ; === COLLISIONLANE ===
+  push r0
+  push r1
+  push r2
+  push r3
+  push r4
+  push r5
 
+  load r0, frogPos              ; r0 = frogPos
+  load r1, currentLaneLimits    ; r1 = *limits[0]
+  loadi r1, r1                  ; r1 = limits[0]
+
+  load r2, currentLaneLimits    ; r2 = *limits[0]
+  inc r2                        ; r2 = *limits[1]
+  loadi r2, r2                  ; r2 = limits[max]
+
+  cmp r0, r1                  ; frogPos < limits[min]?
+  jle collisionLaneEnd        ; if true, outside lane, end function
+
+  cmp r0, r2                  ; frogPos > limits[max]?
+  jgr collisionLaneEnd        ; if true, outside lane, end function
+
+  ; is inside a lane
+  sub r0, r0, r1              ; r0 = normFrog = frogPos - limits[min]
+  load r1, ScreenWidth        ; r1 = width
+  div r2, r0, r1              ; r2 = line = normFrog / width
+  mod r3, r0, r1              ; r3 = char = normFrog % width
+
+  loadn r4, #1                ; r4 = 1
+  add r4, r2, r4              ; r4 = line + 1
+  loadn r5, #2                ; r5 = 2
+  mod r4, r4, r5              ; r4 = (line + 1) % 2
+
+  loadn r5, #globalOffset     ; r5 = *globalOffset[]
+  add r4, r4, r5              ; r4 = *globalOffset[(line + 1) % 2]
+  loadi r4, r4                ; r4 = inverseOffset
+  add r3, r3, r4              ; r3 = char + inverseOffset
+  mod r3, r3, r1              ; r3 = offsetChar = (char + inverseOffset) % width
+
+  loadn r4, #TestLaneColls    ; r4 = **collision[][]
+  add r4, r4, r2              ; r4 = **collision[line][]
+  loadi r4, r4                ; r4 = *collisionLine[]
+  add r4, r4, r3              ; r4 = *collisionLine[offsetChar]
+  loadi r4, r4                ; r4 = collisionChar
+
+  load r0, CollisionTrue      ; r0 = CollisionTrue
+  cmp r0, r4                  ; collisionChar == CollisionTrue?
+  jne collisionLaneEnd        ; if not equal, doesn't have collision
+
+  ; collision exists, reset frog
+  load r0, StartFrogPos       ; r0 = StartFrogPos
+  store frogPos, r0           ; frogPos = r0 = StartFrogPos
+
+collisionLaneEnd:             ; === COLLISIONLANE > END ===
+  pop r5
+  pop r4
+  pop r3
+  pop r2
+  pop r1
+  pop r0
+
+  rts
