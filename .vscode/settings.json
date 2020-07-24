@@ -4,5 +4,10 @@
     },
     "files.exclude": {
         "**/.vscode": true
-    }
+    },
+    "importSorter.importStringConfiguration.trailingComma": "multiLine",
+    "importSorter.sortConfiguration.removeUnusedDefaultImports": true,
+    "importSorter.sortConfiguration.removeUnusedImports": true,
+    "importSorter.importStringConfiguration.numberOfEmptyLinesAfterAllImports": 2,
+    "importSorter.generalConfiguration.sortOnBeforeSave": true
 }

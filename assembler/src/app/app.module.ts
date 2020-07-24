@@ -1,18 +1,23 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgStackFormsModule } from '@ng-stack/forms';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { FileInputDirective } from './file-input.directive';
+import { SimulatorModule } from './simulator/simulator.module';
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FileInputDirective,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    NgStackFormsModule,
+    SimulatorModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

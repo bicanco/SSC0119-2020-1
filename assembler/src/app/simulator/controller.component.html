@@ -1,0 +1,61 @@
+<app-register #IR1></app-register>
+<app-register #IR2></app-register>
+<app-register #IR3></app-register>
+<app-register #R0></app-register>
+<app-register #R1></app-register>
+<app-register #R2></app-register>
+<app-register #R3></app-register>
+<app-register #R4></app-register>
+<app-register #R5></app-register>
+<app-register #R6></app-register>
+<app-register #R7></app-register>
+<app-register #FR></app-register>
+<app-register #PC></app-register>
+<app-register #SP></app-register>
+<app-register #MAR></app-register>
+
+<app-multiplex
+    #M1
+    [inputDevices]="[MAR, PC, SP, M4]"
+    (outputDevice)="memory.address = $event"
+></app-multiplex>
+<app-multiplex
+    #M2
+    [inputDevices]="[ula, SP, M4, memory, KEYBOARD]"
+    (outputDevice)="
+        R0.value = $event;
+        R1.value = $event;
+        R2.value = $event;
+        R3.value = $event;
+        R4.value = $event;
+        R5.value = $event;
+        R6.value = $event;
+        R7.value = $event
+    "
+></app-multiplex>
+<app-multiplex
+    #M3
+    [inputDevices]="[FR, R0, R1, R2, R3, R4, R5, R6, R7]"
+    (outputDevice)="ula.value1 = $event"
+></app-multiplex>
+<app-multiplex
+    #M4
+    [inputDevices]="[R0, R1, R2, R3, R4, R5, R6, R7]"
+    (outputDevice)="ula.value2 = $event"
+></app-multiplex>
+<app-multiplex
+    #M5
+    [inputDevices]="[PC, M3]"
+    (outputDevice)="memory.value = $event"
+></app-multiplex>
+<app-multiplex
+    #M6
+    [inputDevices]="[memory, ula.flag]"
+    (outputDevice)="FR.value = $event"
+></app-multiplex>
+
+<app-keyboard #KEYBOARD></app-keyboard>
+<app-screen #SCREEN></app-screen>
+
+<button type="button" class="btn btn-secondary" (click)="clock.startClock()">Full run</button>
+<button type="button" class="btn btn-secondary" (click)="clock.tick()">Step by step</button>

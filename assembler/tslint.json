@@ -116,7 +116,8 @@
       "options": [
         "ban-keywords",
         "check-format",
-        "allow-pascal-case"
+        "allow-pascal-case",
+        "allow-trailing-underscore"
       ]
     },
     "whitespace": {
@@ -140,7 +141,14 @@
     "template-banana-in-box": true,
     "template-no-negated-async": true,
     "use-lifecycle-interface": true,
-    "use-pipe-transform-interface": true
+    "use-pipe-transform-interface": true,
+    "no-bitwise": false,
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always"
+      }
+    ]
   },
   "rulesDirectory": [
     "codelyzer"
