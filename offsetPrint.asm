@@ -20,21 +20,21 @@ CollisionTrue: var #1
 static CollisionTrue + #0, #'x'
 
 StartFrogPos: var #1
-static StartFrogPos + #0, #640
+static StartFrogPos + #0, #739
 
 LaneSize: var #1
 static LaneSize + #0, #5
 
 FirstLaneBasePos: var #5
-static FirstLaneBasePos + #0, #40
-static FirstLaneBasePos + #1, #80
-static FirstLaneBasePos + #2, #120
-static FirstLaneBasePos + #3, #160
-static FirstLaneBasePos + #4, #200
+static FirstLaneBasePos + #0, #480
+static FirstLaneBasePos + #1, #520
+static FirstLaneBasePos + #2, #560
+static FirstLaneBasePos + #3, #600
+static FirstLaneBasePos + #4, #640
 
 FirstLaneLimits: var #2
-static FirstLaneLimits + #0, #40
-static FirstLaneLimits + #1, #239
+static FirstLaneLimits + #0, #480
+static FirstLaneLimits + #1, #639
 
 ; >>>>>>>>>>>> STRINGS
 TestLaneChars: var #5
@@ -51,6 +51,8 @@ TestLaneColl2: string "==xx=======xx====xx======xx======xx====="
 TestLaneColl3: string "=====xx========xx===xx========xx======xx"
 TestLaneColl4: string "========================================"
 
+GameOver: string "YOU LOSE"
+
 ; >>>>>>>>>>>> GLOBAL VARIABLES
 globalOffset: var #2          ; current line offset = [positive/left, negative/right]
 
@@ -59,6 +61,8 @@ currentLaneColl: var #1       ; current lane collision positions
 currentLaneLimits: var #1     ; current lane limits = [min, max]
 
 frogPos: var #1
+
+points: var #1
 
 offsetCounter: var #1
 static offsetCounter + #0, #0 ; initial offset change counter
@@ -79,10 +83,14 @@ mainLoop:
 ;  breakp
   call moveFrog               ; call move Frog
   call collisionLane          ; call collision lane
+  call nextLane
   call printFrog              ; call print Frog
+  call printPoints
   call printLane              ; call print first lane
   call updateOffset           ; call update offset
   jmp mainLoop                ; test loop
+
+endProgram:
 
   halt                        ; end of program
 
@@ -102,6 +110,9 @@ globalInit:                   ; === GLOBALINIT ===
 
   load r0, StartFrogPos       ; r0 = StartFrogPos
   store frogPos, r0           ; frogPos = r0 = StartFrogPos
+
+  loadn r0, #0
+  store points, r0
 
 globalInitLanes:              ; === GLOBALINIT > LANES ===
   loadn r0, #TestLaneChars    ; r0 = TestLaneChars[0]
@@ -429,10 +440,7 @@ moveFrogCalcLeft:             ; === MOVEFROG > CALC > LEFT ===
 
   load r0, frogPos            ; r0 = frog Pos
   loadn r1, #1                ; r1 = 1
-  sub r0, r0, r1              ; frog Pos = frog pos - 1 = go left
-
-
-moveFrogBorderLeft:           ; === MOVEFROG > BORDER > LEFT ===
+  sub r0, r0, r1              ; frog Pos = frog pos frogPosR > LEFT ===
   loadn r3, #40               ; r3 = 40
   loadn r2, #39               ; r2 = 39
 
@@ -523,15 +531,139 @@ collisionLane:                ; === COLLISIONLANE ===
 
   load r0, CollisionTrue      ; r0 = CollisionTrue
   cmp r0, r4                  ; collisionChar == CollisionTrue?
-  jne collisionLaneEnd        ; if not equal, doesn't have collision
+  jne gainPoints        ; if not equal, doesn't have collision
 
   ; collision exists, reset frog
   load r0, StartFrogPos       ; r0 = StartFrogPos
   store frogPos, r0           ; frogPos = r0 = StartFrogPos
+  jmp endGame
+
+gainPoints:
+  load r0, points
+  inc r0
+  store points, r0
 
 collisionLaneEnd:             ; === COLLISIONLANE > END ===
   pop r5
   pop r4
+  pop r3
+  pop r2
+  pop r1
+  pop r0
+
+  rts
+
+
+printPoints:
+  push r0
+  push r1
+  push r2
+  push r3
+  push r4
+  push r5
+  push r6
+
+  loadn r6, #'0'
+  loadn r5, #0
+  loadn r4, #39
+
+  load r0, points
+  loadn r1, #10
+
+  div r0, r0, r1
+  
+  mod r2, r0, r1
+  add r3, r2, r6
+
+  add r3, r3, r5
+  outchar r3, r4
+
+  div r0, r0, r1
+  dec r4
+    
+  mod r2, r0, r1
+  add r3, r2, r6
+
+  add r3, r3, r5
+  outchar r3, r4
+
+  div r0, r0, r1
+  dec r4
+    
+  mod r2, r0, r1
+  add r3, r2, r6
+
+  add r3, r3, r5
+  outchar r3, r4
+
+  div r0, r0, r1
+  dec r4
+    
+  mod r2, r0, r1
+  add r3, r2, r6
+
+  add r3, r3, r5
+  outchar r3, r4
+
+  pop r6
+  pop r5
+  pop r4
+  pop r3
+  pop r2
+  pop r1
+  pop r0
+
+  rts
+
+
+endGame:
+  push r0
+  push r1
+  push r2
+  push r3
+  push r4
+
+  loadn r0, #415
+  loadn r1, #GameOver
+  loadn r2, #'\0'
+
+endGameLoop:
+  loadi r4, r1
+  cmp r2, r4
+  jeq returnEndGame
+  outchar r4, r0
+
+  inc r0
+  inc r1
+  jmp endGameLoop
+
+returnEndGame:
+
+  pop r4
+  pop r3
+  pop r2
+  pop r1
+  pop r0
+
+  jmp endProgram
+
+
+nextLane:
+  push r0
+  push r1
+  push r2
+  push r3
+
+  load r0, frogPos
+  loadn r1, #440
+  cmp r0, r1
+  jeg endNextLane
+
+  loadn r1, #320
+  add r0, r0, r1
+  store frogPos, r0
+
+endNextLane:
   pop r3
   pop r2
   pop r1
