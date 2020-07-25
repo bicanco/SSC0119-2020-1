@@ -11,7 +11,7 @@
 <app-register #R7></app-register>
 <app-register #FR></app-register>
 <app-register #PC></app-register>
-<app-register #SP></app-register>
+<app-register #SP [initialValue]="'1111111111111111'"></app-register>
 <app-register #MAR></app-register>
 
 <app-multiplex
@@ -36,12 +36,19 @@
 <app-multiplex
     #M3
     [inputDevices]="[FR, R0, R1, R2, R3, R4, R5, R6, R7]"
-    (outputDevice)="ula.value1 = $event"
+    (outputDevice)="
+        ula.value1 = $event;
+        SCREEN.char = $event
+    "
 ></app-multiplex>
 <app-multiplex
     #M4
     [inputDevices]="[R0, R1, R2, R3, R4, R5, R6, R7]"
-    (outputDevice)="ula.value2 = $event"
+    (outputDevice)="
+        ula.value2 = $event;
+        SCREEN.x = $event;
+        SP.value = $event
+    "
 ></app-multiplex>
 <app-multiplex
     #M5
@@ -50,7 +57,7 @@
 ></app-multiplex>
 <app-multiplex
     #M6
-    [inputDevices]="[memory, ula.flag]"
+    [inputDevices]="[memory, {value: ula.flag}]"
     (outputDevice)="FR.value = $event"
 ></app-multiplex>
 

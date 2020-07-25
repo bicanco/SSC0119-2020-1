@@ -4,7 +4,20 @@ interface Instruction {
 }
 
 export const instructions: {[key: string]: Instruction} = {
-    load: { alais: 'load', code: '110000' },
     store: { alais: 'store', code: '110001' },
+    load: { alais: 'load', code: '110000' },
+
+    loadi: { alais: 'loadi', code: '111100' },
+    storei: { alais: 'storei', code: '111101' },
+
+    loadn: { alais: 'loadn', code: '111000' },
+
+    mov: { alais: 'mov', code: '110011' },
+
+    inchar: { alais: 'inchar', code: '110101' },
+    outchar: { alais: 'outchar', code: '110010' },
+
+    halt: { alais: 'halt', code: '001111' },
     noop: { alais: 'noop', code: '000000' },
+    breakp: { alais: 'breakp', code: '001110' },
 };

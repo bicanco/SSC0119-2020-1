@@ -23,7 +23,7 @@ export class ClockService {
             untilDestroyed(this),
             takeUntil(this.stopClockSubject),
             tap(value => this.clock$.next(value)),
-        );
+        ).subscribe();
     }
 
     stopClock() {

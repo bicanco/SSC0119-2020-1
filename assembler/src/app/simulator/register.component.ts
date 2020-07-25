@@ -1,6 +1,6 @@
 import { filter, tap } from 'rxjs/operators';
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { ClockService } from './clock.service';
@@ -13,7 +13,9 @@ import { ClockService } from './clock.service';
 })
 export class RegisterComponent implements OnInit {
 
-  private value_ = '0000000000000000';
+  @Input() initialValue?: string;
+
+  private value_ =  '0000000000000000';
   private nextValue_ = '0000000000000000';
   private write_: boolean;
   private increment_: boolean;
@@ -44,6 +46,8 @@ export class RegisterComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.value_ = this.initialValue || this.value_;
+
     this.clockService.clock.pipe(
       untilDestroyed(this),
       filter(() => this.write_ || this.increment_ || this.reset_),
