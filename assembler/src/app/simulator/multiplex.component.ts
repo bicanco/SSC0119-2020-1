@@ -6,7 +6,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   template: '',
 })
 export class MultiplexComponent {
-  private selected_: string | number;
+  private selected_: string | number = 0;
 
   @Input() inputDevices: Array<any>;
   @Output() outputDevice: EventEmitter<string> = new EventEmitter<string>();

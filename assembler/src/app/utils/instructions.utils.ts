@@ -1,3 +1,6 @@
+
+
+
 interface Instruction {
     code: string;
     alais: string;
@@ -36,6 +39,8 @@ export const instructions: {[key: string]: Instruction} = {
 
     inchar: { alais: 'inchar', code: '110101' },
     outchar: { alais: 'outchar', code: '110010' },
+
+    jmp: { alais: 'jmp', code: '000010' },
 
     halt: { alais: 'halt', code: '001111' },
     noop: { alais: 'noop', code: '000000' },

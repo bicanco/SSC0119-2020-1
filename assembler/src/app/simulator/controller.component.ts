@@ -8,7 +8,7 @@ import {
     M1Options, M2Options, M3Options, M4Options, M5Options, M6Options,
 } from '../utils/multiplex.utils';
 import { getRegister } from '../utils/register.utils';
-import { ulaOperations } from '../utils/ula.utils';
+import { conditionsCheck, ulaOperations } from '../utils/ula.utils';
 import { ClockService } from './clock.service';
 import { KeyboardComponent } from './keyboard.component';
 import { MemoryService } from './memory.service';
@@ -175,6 +175,13 @@ export class ControllerComponent implements OnInit {
                 this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
                 this.SCREEN.write = true;
                 break;
+            case instructions.jmp.code:
+                if (conditionsCheck.get(instruction1.substring(6, 10))(this.ula.flags)) {
+                    this.M1.select = M1Options.PC;
+                    this.PC.write = true;
+                    this.PC.increment = false;
+                }
+                break;
             case instructions.noop.code:
                 break;
             case instructions.halt.code:
@@ -201,7 +208,7 @@ export class ControllerComponent implements OnInit {
 
         this.simulateBus2();
 
-        // console.log(this.IR1, this.IR2, this.PC, this.FR, this.R0.value, this.R1.value, this.ula.flags);
+        console.log(this.PC, this.IR1, this.IR2);
     }
 
     private resetControls() {
@@ -266,5 +273,6 @@ export class ControllerComponent implements OnInit {
 
     private simulateBus1() {
         this.ula.carry = this.FR.value.substring(15, 16);
+        this.memory.address = this.M1.value;
     }
 }

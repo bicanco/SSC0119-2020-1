@@ -53,8 +53,9 @@ export class UlaService {
   }
 
   private setFlags(result: number, mayHaveCarry: boolean) {
-    let aux = '000000000';
+    let aux = '00000000';
 
+    aux += result === 0 ? '1' : '0';
     aux += result === Infinity ? '1' : '0';
     aux += result < 0 ? '1' : '0';
     aux += result > 65535 && result !== Infinity ? '1' : '0';
