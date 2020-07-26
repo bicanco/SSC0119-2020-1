@@ -26,6 +26,14 @@ export const instructions: {[key: string]: Instruction} = {
 
     mod: { alais: 'mod', code: '100101' },
 
+    and: { alais: 'and', code: '010010' },
+    or: { alais: 'or', code: '010011' },
+    xor: { alais: 'xor', code: '010100' },
+
+    not: { alais: 'not', code: '010101' },
+
+    cmp: { alais: 'cmp', code: '010110' },
+
     inchar: { alais: 'inchar', code: '110101' },
     outchar: { alais: 'outchar', code: '110010' },
 

@@ -135,6 +135,10 @@ export class ControllerComponent implements OnInit {
             case instructions.mult.code:
             case instructions.div.code:
             case instructions.mod.code:
+            case instructions.and.code:
+            case instructions.or.code:
+            case instructions.xor.code:
+            case instructions.not.code:
                 this.M3.select = M3Options[getRegister(instruction1.substring(9, 12))];
                 this.M4.select = M4Options[getRegister(instruction1.substring(12, 15))];
                 this.ula.useCarry = instruction1.substring(15, 16);
@@ -150,8 +154,17 @@ export class ControllerComponent implements OnInit {
                 this.ula.op = instruction1.substring(9, 10) === '0'
                     ? ulaOperations.get(instructions.add.code)
                     : ulaOperations.get(instructions.sub.code);
+                this.M6.select = M6Options.ula_flag;
+                this.FR.write = true;
                 this.M2.select = M2Options.ula;
                 this[getRegister(instruction1.substring(6, 9))].write = true;
+                break;
+            case instructions.cmp.code:
+                this.M3.select = M3Options[getRegister(instruction1.substring(6, 9))];
+                this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
+                this.ula.op = ulaOperations.get(instructions.cmp.code);
+                this.M6.select = M6Options.ula_flag;
+                this.FR.write = true;
                 break;
             case instructions.inchar.code:
                 this.M2.select = M2Options.KEYBOARD;
@@ -162,8 +175,6 @@ export class ControllerComponent implements OnInit {
                 this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
                 this.SCREEN.write = true;
                 break;
-            case instructions.setc.code:
-
             case instructions.noop.code:
                 break;
             case instructions.halt.code:
@@ -190,7 +201,7 @@ export class ControllerComponent implements OnInit {
 
         this.simulateBus2();
 
-        console.log(this.IR1, this.IR2, this.PC, this.FR, this.R0.value, this.R1.value, this.R2.value);
+        // console.log(this.IR1, this.IR2, this.PC, this.FR, this.R0.value, this.R1.value, this.ula.flags);
     }
 
     private resetControls() {
