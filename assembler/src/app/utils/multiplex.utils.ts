@@ -34,6 +34,7 @@ export enum M4Options {
     R5,
     R6,
     R7,
+    VALUE_1,
 }
 
 export enum M5Options {

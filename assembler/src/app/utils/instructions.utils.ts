@@ -14,6 +14,18 @@ export const instructions: {[key: string]: Instruction} = {
 
     mov: { alais: 'mov', code: '110011' },
 
+    add: { alais: 'add', code: '100000' },
+
+    sub: { alais: 'sub', code: '100001' },
+
+    mult: { alais: 'mult', code: '100010' },
+
+    div: { alais: 'div', code: '100011' },
+
+    inc: { alais: 'inc', code: '100100' },
+
+    mod: { alais: 'mod', code: '100101' },
+
     inchar: { alais: 'inchar', code: '110101' },
     outchar: { alais: 'outchar', code: '110010' },
 

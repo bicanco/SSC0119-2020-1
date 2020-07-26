@@ -43,7 +43,7 @@
 ></app-multiplex>
 <app-multiplex
     #M4
-    [inputDevices]="[R0, R1, R2, R3, R4, R5, R6, R7]"
+    [inputDevices]="[R0, R1, R2, R3, R4, R5, R6, R7, {value: '1'}]"
     (outputDevice)="
         ula.value2 = $event;
         SCREEN.x = $event;
@@ -57,7 +57,7 @@
 ></app-multiplex>
 <app-multiplex
     #M6
-    [inputDevices]="[memory, {value: ula.flag}]"
+    [inputDevices]="[memory, {value: '0000000000000000'}]"
     (outputDevice)="FR.value = $event"
 ></app-multiplex>
 

@@ -19,6 +19,7 @@ export class RegisterComponent implements OnInit {
   private nextValue_ = '0000000000000000';
   private write_: boolean;
   private increment_: boolean;
+  private decrement_: boolean;
   private reset_: boolean;
 
   get value() {
@@ -37,6 +38,10 @@ export class RegisterComponent implements OnInit {
     this.increment_ = value;
   }
 
+  set decrement(value: boolean) {
+    this.decrement_ = value;
+  }
+
   set reset(value: boolean) {
     this.reset_ = value;
   }
@@ -50,12 +55,14 @@ export class RegisterComponent implements OnInit {
 
     this.clockService.clock.pipe(
       untilDestroyed(this),
-      filter(() => this.write_ || this.increment_ || this.reset_),
+      filter(() => this.write_ || this.increment_ || this.reset_ || this.decrement_),
       tap(() => {
         if (this.reset_) {
           this.value_ = '0000000000000000';
         } else if (this.increment_) {
           this.value_ = ((parseInt(this.value_, 2) + 1 ) % 65536).toString(2).padStart(16, '0');
+        } else if (this.decrement_) {
+          this.value_ = ((parseInt(this.value_, 2) + 65535 ) % 65536).toString(2).padStart(16, '0');
         } else {
           this.updateValue();
         }

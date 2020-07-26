@@ -4,8 +4,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { instructions } from '../utils/instructions.utils';
-import { M1Options, M2Options, M3Options, M4Options, M5Options } from '../utils/multiplex.utils';
+import {
+    M1Options, M2Options, M3Options, M4Options, M5Options, M6Options,
+} from '../utils/multiplex.utils';
 import { getRegister } from '../utils/register.utils';
+import { ulaOperations } from '../utils/ula.utils';
 import { ClockService } from './clock.service';
 import { KeyboardComponent } from './keyboard.component';
 import { MemoryService } from './memory.service';
@@ -64,6 +67,7 @@ export class ControllerComponent implements OnInit {
     }
 
     private process() {
+        this.simulateBus1();
         this.resetControls();
         this.memory.print();
 
@@ -83,7 +87,6 @@ export class ControllerComponent implements OnInit {
                 this.IR1.reset = true;
                 this.PC.increment = false;
                 break;
-
             case instructions.storei.code:
                 this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
                 this.M3.select = M3Options[getRegister(instruction1.substring(6, 9))];
@@ -93,26 +96,22 @@ export class ControllerComponent implements OnInit {
                 this.PC.increment = false;
                 this.IR1.reset = true;
                 break;
-
             case instructions.load.code:
                 this.MAR.write = true;
                 this.IR1.reset = true;
                 this.PC.increment = false;
                 break;
-
             case instructions.loadi.code:
                 this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
                 this.M1.select = M1Options.M4;
                 this.M2.select = M2Options.memory;
                 this[getRegister(instruction1.substring(6, 9))].write = true;
                 break;
-
             case instructions.loadn.code:
                 this.M2.select = M2Options.memory;
                 this[getRegister(instruction1.substring(6, 9))].write = true;
                 this.IR1.reset = true;
                 break;
-
             case instructions.mov.code:
                 switch (instruction1.substring(14, 16)) {
                     case '01':
@@ -131,6 +130,29 @@ export class ControllerComponent implements OnInit {
                         break;
                 }
                 break;
+            case instructions.add.code:
+            case instructions.sub.code:
+            case instructions.mult.code:
+            case instructions.div.code:
+            case instructions.mod.code:
+                this.M3.select = M3Options[getRegister(instruction1.substring(9, 12))];
+                this.M4.select = M4Options[getRegister(instruction1.substring(12, 15))];
+                this.ula.useCarry = instruction1.substring(15, 16);
+                this.ula.op = ulaOperations.get(instruction1.substring(0, 6));
+                this.M2.select = M2Options.ula;
+                this[getRegister(instruction1.substring(6, 9))].write = true;
+                this.M6.select = M6Options.ula_flag;
+                this.FR.write = true;
+                break;
+            case instructions.inc.code:
+                this.M3.select = M3Options[getRegister(instruction1.substring(6, 9))];
+                this.M4.select = M4Options.VALUE_1;
+                this.ula.op = instruction1.substring(9, 10) === '0'
+                    ? ulaOperations.get(instructions.add.code)
+                    : ulaOperations.get(instructions.sub.code);
+                this.M2.select = M2Options.ula;
+                this[getRegister(instruction1.substring(6, 9))].write = true;
+                break;
             case instructions.inchar.code:
                 this.M2.select = M2Options.KEYBOARD;
                 this[getRegister(instruction1.substring(6, 9))].write = true;
@@ -140,14 +162,14 @@ export class ControllerComponent implements OnInit {
                 this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
                 this.SCREEN.write = true;
                 break;
+            case instructions.setc.code:
+
             case instructions.noop.code:
                 break;
-
             case instructions.halt.code:
             case instructions.breakp.code:
                 this.clock.stopClock();
                 break;
-
         }
 
         switch (instruction2.substring(0, 6)) {
@@ -158,23 +180,17 @@ export class ControllerComponent implements OnInit {
                 this.IR1.write = false;
                 this.memory.write = true;
                 break;
-            case instructions.storei.code:
-                break;
             case instructions.load.code:
                 this.M1.select = M1Options.MAR;
                 this.M2.select = M2Options.memory;
                 this.IR1.write = false;
                 this[getRegister(instruction2.substring(6, 9))].write = true;
                 break;
-            case instructions.breakp.code:
-            case instructions.noop.code:
-            case instructions.halt.code:
-                break;
         }
 
-        this.simulateBus();
+        this.simulateBus2();
 
-        console.log(this.IR1, this.IR2, this.PC, this.R0, this.SP);
+        console.log(this.IR1, this.IR2, this.PC, this.FR, this.R0.value, this.R1.value, this.R2.value);
     }
 
     private resetControls() {
@@ -229,11 +245,15 @@ export class ControllerComponent implements OnInit {
         this.SCREEN.write = false;
     }
 
-    private simulateBus() {
+    private simulateBus2() {
         this.PC.value = this.memory.value;
         this.MAR.value = this.memory.value;
         this.IR1.value = this.memory.value;
         this.IR2.value = this.IR1.value;
         this.IR3.value = this.IR2.value;
+    }
+
+    private simulateBus1() {
+        this.ula.carry = this.FR.value.substring(15, 16);
     }
 }

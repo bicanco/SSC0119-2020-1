@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @Injectable()
 export class ClockService {
 
-    private readonly clockMiliseconds = 1000;
+    private readonly clockMiliseconds = 500;
 
     private clock$: Subject<number> = new Subject<number>();
     private stopClockSubject: Subject<boolean> = new Subject<boolean>();
