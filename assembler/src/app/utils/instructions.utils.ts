@@ -42,6 +42,8 @@ export const instructions: {[key: string]: Instruction} = {
 
     jmp: { alais: 'jmp', code: '000010' },
 
+    call: { alais: 'call', code: '000011' },
+
     halt: { alais: 'halt', code: '001111' },
     noop: { alais: 'noop', code: '000000' },
     breakp: { alais: 'breakp', code: '001110' },

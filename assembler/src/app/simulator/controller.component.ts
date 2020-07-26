@@ -76,7 +76,6 @@ export class ControllerComponent implements OnInit {
         const instruction3 = this.IR3.value;
 
         this.IR1.write = true;
-        this.IR2.write = true;
         this.IR3.write = true;
         this.M1.select = M1Options.PC;
         this.PC.increment = true;
@@ -86,6 +85,7 @@ export class ControllerComponent implements OnInit {
                 this.MAR.write = true;
                 this.IR1.reset = true;
                 this.PC.increment = false;
+                this.IR2.write = true;
                 break;
             case instructions.storei.code:
                 this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
@@ -100,6 +100,7 @@ export class ControllerComponent implements OnInit {
                 this.MAR.write = true;
                 this.IR1.reset = true;
                 this.PC.increment = false;
+                this.IR2.write = true;
                 break;
             case instructions.loadi.code:
                 this.M4.select = M4Options[getRegister(instruction1.substring(9, 12))];
@@ -182,6 +183,17 @@ export class ControllerComponent implements OnInit {
                     this.PC.increment = false;
                 }
                 break;
+            case instructions.call.code:
+                if (conditionsCheck.get(instruction1.substring(6, 10))(this.ula.flags)) {
+                    this.M1.select = M1Options.SP;
+                    this.M5.select = M5Options.PC;
+                    this.memory.write = true;
+                    this.SP.decrement = true;
+                    this.PC.increment = false;
+                    this.IR2.write = true;
+                }
+                this.IR1.reset = true;
+                break;
             case instructions.noop.code:
                 break;
             case instructions.halt.code:
@@ -204,11 +216,15 @@ export class ControllerComponent implements OnInit {
                 this.IR1.write = false;
                 this[getRegister(instruction2.substring(6, 9))].write = true;
                 break;
+            case instructions.call.code:
+                this.M1.select = M1Options.PC;
+                this.PC.write = true;
+                this.PC.increment = false;
         }
 
         this.simulateBus2();
 
-        console.log(this.PC, this.IR1, this.IR2);
+        console.log('PC', this.PC.value, 'IR1', this.IR1.value, 'IR2', this.IR2.value, 'SP', this.SP.value);
     }
 
     private resetControls() {
@@ -245,6 +261,7 @@ export class ControllerComponent implements OnInit {
         this.PC.reset = false;
         this.SP.write = false;
         this.SP.increment = false;
+        this.SP.decrement = false;
         this.SP.reset = false;
         this.MAR.write = false;
         this.MAR.increment = false;
