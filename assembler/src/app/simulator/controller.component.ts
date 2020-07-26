@@ -27,7 +27,6 @@ export class ControllerComponent implements OnInit {
 
     @ViewChild('IR1', {read: RegisterComponent, static: true}) IR1: RegisterComponent;
     @ViewChild('IR2', {read: RegisterComponent, static: true}) IR2: RegisterComponent;
-    @ViewChild('IR3', {read: RegisterComponent, static: true}) IR3: RegisterComponent;
     @ViewChild('R0', {read: RegisterComponent, static: true}) R0: RegisterComponent;
     @ViewChild('R1', {read: RegisterComponent, static: true}) R1: RegisterComponent;
     @ViewChild('R2', {read: RegisterComponent, static: true}) R2: RegisterComponent;
@@ -73,10 +72,8 @@ export class ControllerComponent implements OnInit {
 
         const instruction1 = this.IR1.value;
         const instruction2 = this.IR2.value;
-        const instruction3 = this.IR3.value;
 
         this.IR1.write = true;
-        this.IR3.write = true;
         this.M1.select = M1Options.PC;
         this.PC.increment = true;
 
@@ -194,6 +191,11 @@ export class ControllerComponent implements OnInit {
                 }
                 this.IR1.reset = true;
                 break;
+            case instructions.rts.code:
+                this.SP.increment = true;
+                this.IR2.write = true;
+                this.IR1.reset = true;
+                break;
             case instructions.noop.code:
                 break;
             case instructions.halt.code:
@@ -209,22 +211,34 @@ export class ControllerComponent implements OnInit {
                 this.M5.select = M5Options.M3;
                 this.IR1.write = false;
                 this.memory.write = true;
+                this.IR2.reset = true;
                 break;
             case instructions.load.code:
                 this.M1.select = M1Options.MAR;
                 this.M2.select = M2Options.memory;
                 this.IR1.write = false;
                 this[getRegister(instruction2.substring(6, 9))].write = true;
+                this.IR2.reset = true;
                 break;
             case instructions.call.code:
                 this.M1.select = M1Options.PC;
                 this.PC.write = true;
                 this.PC.increment = false;
+                this.IR1.reset = true;
+                this.IR2.reset = true;
+                break;
+            case instructions.rts.code:
+                this.M1.select = M1Options.SP;
+                this.PC.write = true;
+                this.PC.increment = false;
+                this.IR2.reset = true;
+                this.IR1.write = false;
+                break;
         }
 
         this.simulateBus2();
 
-        console.log('PC', this.PC.value, 'IR1', this.IR1.value, 'IR2', this.IR2.value, 'SP', this.SP.value);
+        console.log('PC', this.PC.value, 'IR1', this.IR1.value, 'IR2', this.IR2.value, 'SP', this.SP.value, this.ula.flags);
     }
 
     private resetControls() {
@@ -273,9 +287,6 @@ export class ControllerComponent implements OnInit {
         this.IR2.reset = false;
         this.IR2.write = false;
         this.IR2.increment = false;
-        this.IR3.reset = false;
-        this.IR3.write = false;
-        this.IR3.increment = false;
         this.memory.write = false;
         this.SCREEN.write = false;
     }
@@ -285,11 +296,11 @@ export class ControllerComponent implements OnInit {
         this.MAR.value = this.memory.value;
         this.IR1.value = this.memory.value;
         this.IR2.value = this.IR1.value;
-        this.IR3.value = this.IR2.value;
     }
 
     private simulateBus1() {
         this.ula.carry = this.FR.value.substring(15, 16);
         this.memory.address = this.M1.value;
+        this.memory.value = this.M5.value;
     }
 }
