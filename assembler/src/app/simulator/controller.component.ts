@@ -8,7 +8,7 @@ import {
     M1Options, M2Options, M3Options, M4Options, M5Options, M6Options,
 } from '../utils/multiplex.utils';
 import { getRegister } from '../utils/register.utils';
-import { conditionsCheck, ulaOperations } from '../utils/ula.utils';
+import { conditionsCheck, GetUlaFlags, ulaOperations } from '../utils/ula.utils';
 import { ClockService } from './clock.service';
 import { KeyboardComponent } from './keyboard.component';
 import { MemoryService } from './memory.service';
@@ -49,13 +49,15 @@ export class ControllerComponent implements OnInit {
 
     @ViewChild('KEYBOARD', {read: KeyboardComponent, static: true}) KEYBOARD: KeyboardComponent;
     @ViewChild('SCREEN', {read: ScreenComponent, static: true}) SCREEN: ScreenComponent;
-
+    getUlaFlags: GetUlaFlags;
 
     constructor(
         public readonly clock: ClockService,
         public readonly memory: MemoryService,
         public readonly ula: UlaService,
-    ) {}
+    ) {
+        this.getUlaFlags = new GetUlaFlags(ula);
+    }
 
     ngOnInit() {
         this.memory.address = '0';
@@ -196,6 +198,24 @@ export class ControllerComponent implements OnInit {
                 this.IR2.write = true;
                 this.IR1.reset = true;
                 break;
+            case instructions.push.code:
+                if (instruction1.substring(9, 10) === '0') {
+                    this.M3.select = M3Options[getRegister(instruction1.substring(6, 9))];
+                } else {
+                    this.M3.select = M3Options.FR;
+                }
+                this.M5.select = M5Options.M3;
+                this.M1.select = M1Options.SP;
+                this.memory.write = true;
+                this.SP.decrement = true;
+                this.PC.increment = false;
+                break;
+            case instructions.pop.code:
+                this.SP.increment = true;
+                this.IR2.write = true;
+                this.IR1.reset = true;
+                this.PC.increment = false;
+                break;
             case instructions.noop.code:
                 break;
             case instructions.halt.code:
@@ -234,11 +254,24 @@ export class ControllerComponent implements OnInit {
                 this.IR2.reset = true;
                 this.IR1.write = false;
                 break;
+            case instructions.pop.code:
+                this.M1.select = M1Options.SP;
+                if (instruction2.substring(9, 10) === '0') {
+                    this.M2.select = M2Options.memory;
+                    this[getRegister(instruction2.substring(6, 9))].write = true;
+                } else {
+                    this.M6.select = M6Options.memory;
+                    this.FR.write = true;
+                }
+                this.PC.increment = false;
+                this.IR1.write = false;
+                this.IR2.reset = true;
+                break;
         }
 
         this.simulateBus2();
 
-        console.log('PC', this.PC.value, 'IR1', this.IR1.value, 'IR2', this.IR2.value, 'SP', this.SP.value, this.ula.flags);
+        console.log('PC', this.PC.value, 'IR1', this.IR1.value, 'IR2', this.IR2.value, 'SP', this.SP.value, this.ula.flags, this.FR.value);
     }
 
     private resetControls() {

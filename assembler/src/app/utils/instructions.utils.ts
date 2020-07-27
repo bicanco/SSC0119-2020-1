@@ -46,6 +46,9 @@ export const instructions: {[key: string]: Instruction} = {
 
     rts: { alais: 'rts', code: '000100' },
 
+    push: { alais: 'push', code: '000101' },
+    pop: { alais: 'pop', code: '000110' },
+
     halt: { alais: 'halt', code: '001111' },
     noop: { alais: 'noop', code: '000000' },
     breakp: { alais: 'breakp', code: '001110' },

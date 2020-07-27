@@ -1,3 +1,4 @@
+import { UlaService } from '../simulator/ula.service';
 import { instructions } from './instructions.utils';
 
 
@@ -64,3 +65,14 @@ export const conditionsCheck = new Map<string, (flags: string) => boolean>([
     [conditions.negative, (flag) => !!+flag[UlaFlags.NEGATIVE]],
     [conditions.divByZero, (flag) => !!+flag[UlaFlags.DIVBYZERO]],
 ]);
+
+export class GetUlaFlags {
+    private ula: UlaService;
+    constructor(ula: UlaService) {
+        this.ula = ula;
+    }
+
+    get value() {
+        return this.ula.flags;
+    }
+}

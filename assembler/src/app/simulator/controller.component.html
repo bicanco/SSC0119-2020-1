@@ -56,7 +56,7 @@
 ></app-multiplex>
 <app-multiplex
     #M6
-    [inputDevices]="[memory, {value: '0000000000000000'}]"
+    [inputDevices]="[memory, getUlaFlags]"
     (outputDevice)="FR.value = $event"
 ></app-multiplex>
 
