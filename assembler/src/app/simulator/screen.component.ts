@@ -3,7 +3,9 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-screen',
-  template: '<canvas #canvas width="800px" height="600px"></canvas>',
+  template: `<div class="d-flex justify-content-center py-4">
+    <canvas #canvas width="800px" height="600px"></canvas>
+  </div>`,
 })
 export class ScreenComponent implements OnInit {
   @ViewChild('canvas', { static: true }) private canvas: ElementRef;

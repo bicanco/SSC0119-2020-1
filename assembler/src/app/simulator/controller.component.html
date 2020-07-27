@@ -63,5 +63,7 @@
 <app-keyboard #KEYBOARD></app-keyboard>
 <app-screen #SCREEN></app-screen>
 
-<button type="button" class="btn btn-secondary" (click)="clock.startClock()">Full run</button>
-<button type="button" class="btn btn-secondary" (click)="clock.tick()">Step by step</button>
+<div class="d-flex justify-content-center">
+    <button type="button" class="btn btn-secondary" (click)="clock.startClock()">Full run</button>
+    <button type="button" class="btn btn-secondary" (click)="clock.tick()">Step by step</button>
+</div>
