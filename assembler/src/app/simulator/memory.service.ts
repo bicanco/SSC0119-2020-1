@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 
-
 @Injectable()
 export class MemoryService {
   private memory_ = new Array<string>();
@@ -40,6 +39,10 @@ export class MemoryService {
 
   print() {
     console.log(this.memory_);
+  }
+
+  initMemory(memory: Array<string>) {
+    this.memory_ = memory;
   }
 
 }

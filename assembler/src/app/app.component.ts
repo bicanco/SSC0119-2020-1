@@ -4,11 +4,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@ng-stack/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+import { MemoryService } from './simulator/memory.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
+  providers: [MemoryService],
 })
 export class AppComponent implements OnInit {
 
@@ -21,6 +23,10 @@ export class AppComponent implements OnInit {
   downloadFile: boolean;
   showButtons: boolean;
   file: File;
+
+  constructor(
+    private readonly memory: MemoryService,
+  ) {}
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -55,6 +61,23 @@ export class AppComponent implements OnInit {
         this.downloadFile = true;
         break;
       case 'Simulate':
+        const fileReader = new FileReader();
+        fileReader.onloadend = () => {
+          const initalValue = new Array<string>();
+          const lines = (fileReader.result as string).split('\n');
+
+          for(let i = 6; i < lines.length - 2; i++) {
+            const value = /\d+:((?:0|1){16});/.exec(lines[i])?.[1];
+            if (value && value !== '0000000000000000') {
+              initalValue[i - 6] = value;
+            }
+          }
+
+          this.memory.initMemory(initalValue);
+        }
+
+        console.log(this.file);
+        fileReader.readAsText(this.file);
         break;
     }
   }

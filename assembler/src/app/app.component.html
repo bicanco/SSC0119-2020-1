@@ -7,7 +7,7 @@
             type="file"
             [control]="form.controls.source"
             appFileInput
-            (file)="file"
+            (file)="file = $event"
         >
         <label for="sourceInput" class="custom-file-label">{{ form.value.source || 'Choose file' }}</label>
     </div>

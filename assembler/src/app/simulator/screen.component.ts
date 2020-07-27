@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
-
 @Component({
   selector: 'app-screen',
   template: `<div class="d-flex justify-content-center py-4">
@@ -47,7 +46,7 @@ export class ScreenComponent implements OnInit {
     const text = String.fromCharCode(parseInt(this.char_.substring(8, 16), 2));
     const position = parseInt(this.x_, 2);
 
-    this.context.fillText(text, (position % 40), Math.floor(position / 40));
+    this.context.fillText(text, (position % 40) * 2, Math.floor(position / 40)*2 + 40);
   }
 
   private setColor() {

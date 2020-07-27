@@ -4,12 +4,11 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
-
 @UntilDestroy()
 @Injectable()
 export class ClockService {
 
-    private readonly clockMiliseconds = 500;
+    private readonly clockMiliseconds = 200;
 
     private clock$: Subject<number> = new Subject<number>();
     private stopClockSubject: Subject<boolean> = new Subject<boolean>();
