@@ -8,7 +8,7 @@
 ; 256 marrom						0001 0000
 ; 512 verde							0010 0000
 ; 768 oliva							0011 0000
-; 1024 azul marinho						0100 0000
+; 1024 azul marinho					0100 0000
 ; 1280 roxo							0101 0000
 ; 1536 teal							0110 0000
 ; 1792 prata						0111 0000
